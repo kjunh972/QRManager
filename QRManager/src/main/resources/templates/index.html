@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>QR 코드 생성기</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4CAF50;
+            --error-color: #ef233c;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #2b2d42;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #qrResult {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .file-input-wrapper {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-wrapper:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .file-input-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .file-input-label i {
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+
+        .file-input-text {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        .file-input-subtext {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .reset-btn {
+            background-color: var(--error-color);
+            margin-top: 1rem;
+        }
+
+        .reset-btn:hover {
+            background-color: #d90429;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container fade-in">
+        <h1>
+            <i class="material-icons" style="vertical-align: middle; margin-right: 10px;">qr_code_2</i>
+            QR 컨텐츠 매니저
+        </h1>
+
+        <form id="contentForm" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">컨텐츠 타입</label>
+                <select id="contentType" name="type">
+                    <option value="">선택하세요</option>
+                    <option value="address">주소</option>
+                    <option value="text">텍스트</option>
+                    <option value="image">이미지</option>
+                    <option value="video">비디오</option>
+                    <option value="vcard">연락처</option>
+                    <option value="quiz">미니게임 (Quiz)</option>
+                </select>
+            </div>
+
+            <div id="addressInput" class="form-group hidden">
+                <label class="form-label">주소 입력</label>
+                <input type="text" name="address" placeholder="https://www.example.com">
+            </div>
+
+            <div id="textInput" class="form-group hidden">
+                <label class="form-label">텍스트 입력</label>
+                <textarea name="data" rows="4" placeholder="텍스트를 입력하세요..."></textarea>
+            </div>
+
+            <div id="fileInput" class="form-group hidden">
+                <label class="form-label">파일 업로드</label>
+                <div class="file-input-wrapper">
+                    <label class="file-input-label">
+                        <i class="material-icons">cloud_upload</i>
+                        <span class="file-input-text">파일을 선택하거나 여기에 끌어다 놓으세요</span>
+                        <span class="file-input-subtext">최대 50MB까지 업로드 가능</span>
+                        <input type="file" id="fileUpload" name="file" accept="image/*,video/*" style="display: none;">
+                    </label>
+                </div>
+            </div>
+
+            <div id="vcardInput" class="form-group hidden">
+                <label class="form-label">연락처 정보</label>
+                <input type="text" name="name" placeholder="이름" class="form-group">
+                <input type="text" name="phone" placeholder="전화번호" class="form-group">
+                <input type="text" name="email" placeholder="이메일" class="form-group">
+                <input type="text" name="address" placeholder="주소">
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">qr_code</i>
+                QR 코드 생성하기
+            </button>
+        </form>
+
+        <div th:if="${qrCode}" class="qr-code fade-in">
+            <h2>생성된 QR 코드</h2>
+            <img th:src="@{'data:image/png;base64,' + ${qrCode}}" alt="QR Code" />
+            <button id="resetBtn" class="reset-btn">
+                <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">refresh</i>
+                QR 코드 초기화
+            </button>
+        </div>
+
+        <div th:if="${error}" class="message error fade-in">
+            <p th:text="${error}"></p>
+        </div>
+    </div>
+    <script>
+        let selectedFile = null;
+
+        document.getElementById('contentType').addEventListener('change', function () {
+            var addressInput = document.getElementById('addressInput');
+            var textInput = document.getElementById('textInput');
+            var fileInput = document.getElementById('fileInput');
+            var vcardInput = document.getElementById('vcardInput');
+
+            addressInput.classList.add('hidden');
+            textInput.classList.add('hidden');
+            fileInput.classList.add('hidden');
+            vcardInput.classList.add('hidden');
+
+            switch (this.value) {
+                case 'address':
+                    addressInput.classList.remove('hidden');
+                    break;
+                case 'text':
+                    textInput.classList.remove('hidden');
+                    break;
+                case 'image':
+                case 'video':
+                    fileInput.classList.remove('hidden');
+                    break;
+                case 'vcard':
+                    vcardInput.classList.remove('hidden');
+                    break;
+            }
+        });
+
+        document.getElementById('contentForm').addEventListener('submit', function (e) {
+            var contentType = document.getElementById('contentType').value;
+            if (contentType === '') {
+                e.preventDefault();
+                Swal.fire({
+                    title: '오류!',
+                    text: '컨텐츠 타입을 선택해주세요.',
+                    icon: 'error',
+                    confirmButtonText: '확인'
+                });
+                return;
+            }
+
+            if (contentType === 'image' || contentType === 'video') {
+                var fileInput = document.getElementById('fileUpload');
+                if (!selectedFile) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '오류!',
+                        text: '파일을 선택해주세요.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
+                    return;
+                }
+
+                // 파일명에서 한글 및 특수문자 제거
+                var newFileName = selectedFile.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                var newFile = new File([selectedFile], newFileName, { type: selectedFile.type });
+                
+                // 새로운 FileList 객체 생성
+                var dataTransfer = new DataTransfer();
+                dataTransfer.items.add(newFile);
+                fileInput.files = dataTransfer.files;
+            }
+        });
+
+        document.getElementById('fileUpload').addEventListener('change', function (e) {
+            var file = e.target.files[0];
+            var maxSize = 50 * 1024 * 1024; // 50MB in bytes
+
+            if (file && file.size > maxSize) {
+                Swal.fire({
+                    title: '파일 크기 초과!',
+                    text: '파일 크기가 50MB를 초과합니다. 더 작은 파일을 선택해주세요.',
+                    icon: 'warning',
+                    confirmButtonText: '확인'
+                });
+                this.value = '';
+                selectedFile = null;
+            } else if (file) {
+                selectedFile = file;
+                const label = this.closest('.file-input-wrapper').querySelector('.file-input-label');
+                label.innerHTML = `
+                    <i class="material-icons" style="color: var(--success-color)">check_circle</i>
+                    <span class="file-input-text">${file.name}</span>
+                    <span class="file-input-subtext">파일이 선택되었습니다</span>
+                    <input type="file" id="fileUpload" name="file" accept="image/*,video/*" style="display: none;">
+                `;
+            }
+        });
+
+        if (document.querySelector('.qr-code')) {
+            Swal.fire({
+                title: '성공!',
+                text: 'QR 코드가 생성되었습니다.',
+                icon: 'success',
+                confirmButtonText: '확인'
+            });
+        }
+
+        document.getElementById('resetBtn')?.addEventListener('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: '초기화하시겠습니까?',
+                text: "QR 코드가 초기화됩니다.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '확인',
+                cancelButtonText: '취소'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    selectedFile = null;
+                    location.href = '/';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

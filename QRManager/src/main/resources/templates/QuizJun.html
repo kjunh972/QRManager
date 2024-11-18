@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈 게임</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1d1d1f;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #d2d2d7;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 12px;
+            background-color: #0071e3;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0077ed;
+        }
+
+        button.secondary {
+            background-color: #f5f5f7;
+            color: #0071e3;
+            border: 1px solid #0071e3;
+        }
+
+        .leaderboard {
+            margin-top: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #d2d2d7;
+        }
+
+        th {
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        #questionContainer {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #options {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #options button {
+            background-color: white;
+            color: #1d1d1f;
+            border: 1px solid #d2d2d7;
+        }
+
+        #options button:hover {
+            background-color: #f5f5f7;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 18px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 닉네임 입력 섹션 -->
+        <div id="nicknameSection">
+            <h2>퀴즈 게임</h2>
+            <input type="text" id="nickname" placeholder="닉네임을 입력해주세요">
+            <button onclick="startQuiz()">게임 시작하기</button>
+            <button class="secondary" onclick="showLeaderboard()">순위 보기</button>
+        </div>
+
+        <!-- 퀴즈 섹션 -->
+        <div id="quizSection" class="hidden">
+            <h2>퀴즈</h2>
+            <div id="questionContainer">
+                <p id="question"></p>
+                <div id="options"></div>
+            </div>
+            <p class="score-display">현재 점수: <span id="currentScore">0</span></p>
+        </div>
+
+        <!-- 결과 섹션 -->
+        <div id="resultSection" class="hidden">
+            <h2>퀴즈 완료!</h2>
+            <p class="score-display">최종 점수: <span id="finalScore">0</span></p>
+            <button onclick="location.reload()">다시 시작하기</button>
+            <div class="leaderboard">
+                <h3>순위표</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>순위</th>
+                            <th>닉네임</th>
+                            <th>점수</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr th:each="score, stat : ${leaderboard}">
+                            <td th:text="${stat.index + 1}">1</td>
+                            <td th:text="${score.nickname}">닉네임</td>
+                            <td th:text="${score.score}">점수</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 순위표 섹션 -->
+        <div id="leaderboardSection" class="hidden">
+            <h2>순위표</h2>
+            <div class="leaderboard">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>순위</th>
+                            <th>닉네임</th>
+                            <th>점수</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBodyMain"></tbody>
+                </table>
+            </div>
+            <button onclick="hideLeaderboard()">돌아가기</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "대한민국의 수도는?",
+                options: ["서울", "부산", "대구", "인천"],
+                correct: 0
+            },
+            {
+                question: "1 + 1 = ?",
+                options: ["1", "2", "3", "4"],
+                correct: 1
+            },
+            {
+                question: "고양이가 세상을 지배한다면, 가장 먼저 금지할 행동은?",
+                options: ["개를 산책시키기", "책 읽기", "TV 보기", "청소하기"],
+                correct: 0
+            },
+            {
+                question: "태양계에서 가장 큰 행성은?",
+                options: ["지구", "화성", "목성", "토성"],
+                correct: 2
+            },
+            {
+                question: "1년은 몇 개월인가요?",
+                options: ["10개월", "11개월", "12개월", "13개월"],
+                correct: 2
+            },
+            {
+                question: "한글날은 몇 월 며칠인가요?",
+                options: ["9월 9일", "10월 9일", "11월 9일", "12월 9일"],
+                correct: 1
+            },
+            {
+                question: "파이의 값은 소수점 둘째 자리까지 얼마인가요?",
+                options: ["3.12", "3.13", "3.14", "3.15"],
+                correct: 2
+            },
+            {
+                question: "토끼는 당근을 먹을 때 무슨 생각을 할까요?",
+                options: ["이건 내꺼다!", "더 주세요!", "이걸 왜 먹지?", "당근은 진리다!"],
+                correct: 1
+            },
+            {
+                question: "외계인이 지구를 방문한다면 가장 먼저 할 일은?",
+                options: ["핸드폰 사기", "피자 먹기", "유튜브 보기", "SNS에 인증샷 올리기"],
+                correct: 3
+            },
+            {
+                question: "지구는 몇 개의 위성을 가지고 있나요?",
+                options: ["0개", "1개", "2개", "3개"],
+                correct: 1
+            },
+        ];
+
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userNickname = "";
+
+        function showLeaderboard() {
+            document.getElementById("nicknameSection").classList.add("hidden");
+            document.getElementById("leaderboardSection").classList.remove("hidden");
+            loadLeaderboard(true);
+        }
+
+        function hideLeaderboard() {
+            document.getElementById("leaderboardSection").classList.add("hidden");
+            document.getElementById("nicknameSection").classList.remove("hidden");
+        }
+
+        function startQuiz() {
+            userNickname = document.getElementById("nickname").value;
+            if (!userNickname) {
+                alert("닉네임을 입력해주세요!");
+                return;
+            }
+
+            document.getElementById("nicknameSection").classList.add("hidden");
+            document.getElementById("quizSection").classList.remove("hidden");
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                finishQuiz();
+                return;
+            }
+
+            const questionData = questions[currentQuestion];
+            document.getElementById("question").textContent = questionData.question;
+
+            const optionsHtml = questionData.options.map((option, index) =>
+                `<button onclick="checkAnswer(${index})">${option}</button>`
+            ).join("");
+
+            document.getElementById("options").innerHTML = optionsHtml;
+        }
+
+        function checkAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            if (selectedIndex === question.correct) {
+                score += 10;
+                document.getElementById("currentScore").textContent = score;
+            }
+
+            currentQuestion++;
+            showQuestion();
+        }
+
+        function finishQuiz() {
+            document.getElementById("quizSection").classList.add("hidden");
+            document.getElementById("resultSection").classList.remove("hidden");
+            document.getElementById("finalScore").textContent = score;
+            saveScore();
+            loadLeaderboard();
+        }
+
+        function saveScore() {
+            fetch('/api/quiz/score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nickname: userNickname,
+                    score: score
+                })
+            }).then(() => {
+                loadLeaderboard();
+            });
+        }
+
+        function loadLeaderboard(isMainLeaderboard = false) {
+            fetch('/api/quiz/leaderboard')
+                .then(response => response.json())
+                .then(data => {
+                    const leaderboardHtml = data.map((entry, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${entry.nickname}</td>
+                            <td>${entry.score}</td>
+                        </tr>
+                    `).join("");
+                    if (isMainLeaderboard) {
+                        document.getElementById("leaderboardBodyMain").innerHTML = leaderboardHtml;
+                    } else {
+                        document.getElementById("leaderboardBody").innerHTML = leaderboardHtml;
+                    }
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadLeaderboard();
+        });
+    </script>
+</body>
+
+</html>
