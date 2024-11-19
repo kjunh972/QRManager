@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
     <style>
         :root {
             --primary-color: #4361ee;
@@ -161,6 +163,7 @@
                     <option value="video">비디오</option>
                     <option value="vcard">연락처</option>
                     <option value="quiz">미니게임 (Quiz)</option>
+                    <option value="location">현재 위치</option>
                 </select>
             </div>
 
@@ -194,6 +197,19 @@
                 <input type="text" name="address" placeholder="주소">
             </div>
 
+            <div id="locationInput" class="form-group hidden">
+                <label class="form-label">위치 정보</label>
+                <div class="location-buttons">
+                    <button type="button" class="current-location-btn" onclick="getCurrentLocation()">
+                        <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">my_location</i>
+                        현재 위치 가져오기
+                    </button>
+                </div>
+                <input type="text" id="locationName" name="locationName" placeholder="위치명" readonly>
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+            </div>
+
             <button type="submit" class="submit-btn">
                 <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">qr_code</i>
                 QR 코드 생성하기
@@ -221,11 +237,13 @@
             var textInput = document.getElementById('textInput');
             var fileInput = document.getElementById('fileInput');
             var vcardInput = document.getElementById('vcardInput');
+            var locationInput = document.getElementById('locationInput');
 
             addressInput.classList.add('hidden');
             textInput.classList.add('hidden');
             fileInput.classList.add('hidden');
             vcardInput.classList.add('hidden');
+            locationInput.classList.add('hidden');
 
             switch (this.value) {
                 case 'address':
@@ -241,8 +259,81 @@
                 case 'vcard':
                     vcardInput.classList.remove('hidden');
                     break;
+                case 'location':
+                    locationInput.classList.remove('hidden');
+                    break;
             }
         });
+
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                Swal.fire({
+                    title: '위치 확인 중...',
+                    text: '현재 위치를 확인하고 있습니다.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+
+                        // 바로 좌표값 설정
+                        document.getElementById('locationName').value = `위도: ${lat}, 경도: ${lng}`;
+                        document.getElementById('latitude').value = lat;
+                        document.getElementById('longitude').value = lng;
+
+                        // 위치 확인 완료 메시지 표시
+                        Swal.fire({
+                            title: '위치 확인 완료!',
+                            text: '현재 위치가 설정되었습니다.',
+                            icon: 'success',
+                            confirmButtonText: '확인'
+                        });
+
+                        // 백그라운드에서 주소 정보 가져오기
+                        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&language=ko`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.results && data.results[0]) {
+                                    document.getElementById('locationName').value = data.results[0].formatted_address;
+                                }
+                            })
+                            .catch(error => {
+                                console.log('주소 변환 중 오류 발생:', error);
+                            });
+                    },
+                    function (error) {
+                        let errorMessage = '위치 정보를 가져올 수 없습니다.';
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = '위치 정보 접근이 거부되었습니다.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = '위치 정보를 사용할 수 없습니다.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = '위치 정보 요청이 시간 초과되었습니다.';
+                                break;
+                        }
+                        Swal.fire({
+                            title: '오류!',
+                            text: errorMessage,
+                            icon: 'error',
+                            confirmButtonText: '확인'
+                        });
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,  // 타임아웃 시간을 5초로 줄임
+                        maximumAge: 0
+                    }
+                );
+            }
+        }
 
         document.getElementById('contentForm').addEventListener('submit', function (e) {
             var contentType = document.getElementById('contentType').value;
@@ -255,6 +346,21 @@
                     confirmButtonText: '확인'
                 });
                 return;
+            }
+
+            if (contentType === 'location') {
+                var latitude = document.getElementById('latitude').value;
+                var longitude = document.getElementById('longitude').value;
+                if (!latitude || !longitude) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '오류!',
+                        text: '현재 위치를 가져와주세요.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
+                    return;
+                }
             }
 
             if (contentType === 'image' || contentType === 'video') {
@@ -273,7 +379,7 @@
                 // 파일명에서 한글 및 특수문자 제거
                 var newFileName = selectedFile.name.replace(/[^a-zA-Z0-9.]/g, '_');
                 var newFile = new File([selectedFile], newFileName, { type: selectedFile.type });
-                
+
                 // 새로운 FileList 객체 생성
                 var dataTransfer = new DataTransfer();
                 dataTransfer.items.add(newFile);

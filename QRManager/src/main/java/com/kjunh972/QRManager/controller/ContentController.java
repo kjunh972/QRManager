@@ -37,6 +37,8 @@ public class ContentController {
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "phone", required = false) String phone,
 			@RequestParam(value = "email", required = false) String email,
+			@RequestParam(value = "latitude", required = false) String latitude,
+			@RequestParam(value = "longitude", required = false) String longitude,
 			Model model) {
 		try {
 			String qrCode;
@@ -51,6 +53,16 @@ public class ContentController {
 					break;
 				case "vcard":
 					qrCode = contentService.generateVCardQRCode(name, phone, email, address);
+					break;
+				case "location":
+					if (latitude == null || longitude == null) {
+						model.addAttribute("error", "위치 정보가 올바르지 않습니다.");
+						return "index";
+					}
+					// 구글 지도 앱으로 바로 연결되는 URL 생성
+					String locationUrl = String.format("geo:%s,%s?q=%s,%s",
+							latitude, longitude, latitude, longitude);
+					qrCode = contentService.generateQRCode(locationUrl);
 					break;
 				case "image":
 				case "video":
