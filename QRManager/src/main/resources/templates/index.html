@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    
+
     <style>
         :root {
             --primary-color: #4361ee;
@@ -23,12 +23,14 @@
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        /* 기본 리셋 스타일 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* 바디 기본 스타일 */
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: var(--background-color);
@@ -37,6 +39,7 @@
             padding: 2rem;
         }
 
+        /* 컨테이너 스타일링 */
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -46,22 +49,26 @@
             box-shadow: var(--shadow);
         }
 
+        /* 제목 스타일링 */
         h1 {
             text-align: center;
             color: var(--primary-color);
             margin-bottom: 2rem;
         }
 
+        /* 입력 그룹 스타일링 */
         .input-group {
             margin-bottom: 1.5rem;
         }
 
+        /* 라벨 스타일링 */
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
         }
 
+        /* 입력 필드 공통 스타일 */
         select,
         input,
         textarea {
@@ -73,6 +80,7 @@
             margin-bottom: 1rem;
         }
 
+        /* 버튼 기본 스타일 */
         button {
             background-color: var(--primary-color);
             color: white;
@@ -85,19 +93,23 @@
             transition: background-color 0.3s;
         }
 
+        /* 버튼 호버 효과 */
         button:hover {
             background-color: var(--secondary-color);
         }
 
+        /* QR 결과 영역 스타일 */
         #qrResult {
             text-align: center;
             margin-top: 2rem;
         }
 
+        /* 숨김 클래스 */
         .hidden {
             display: none;
         }
 
+        /* 파일 입력 래퍼 스타일 */
         .file-input-wrapper {
             border: 2px dashed var(--primary-color);
             border-radius: var(--border-radius);
@@ -107,10 +119,12 @@
             transition: all 0.3s ease;
         }
 
+        /* 파일 입력 래퍼 호버 효과 */
         .file-input-wrapper:hover {
             background-color: rgba(67, 97, 238, 0.05);
         }
 
+        /* 파일 입력 라벨 스타일 */
         .file-input-label {
             display: flex;
             flex-direction: column;
@@ -119,43 +133,117 @@
             cursor: pointer;
         }
 
+        /* 파일 입력 아이콘 스타일 */
         .file-input-label i {
             font-size: 3rem;
             color: var(--primary-color);
         }
 
+        /* 파일 입력 텍스트 스타일 */
         .file-input-text {
             font-size: 1.1rem;
             color: var(--text-color);
         }
 
+        /* 파일 입력 서브텍스트 스타일 */
         .file-input-subtext {
             font-size: 0.9rem;
             color: #666;
         }
 
+        /* 리셋 버튼 스타일 */
         .reset-btn {
             background-color: var(--error-color);
             margin-top: 1rem;
+            display: inline-block;
+            width: auto;
+            min-width: 200px;
         }
 
+        /* 리셋 버튼 호버 효과 */
         .reset-btn:hover {
             background-color: #d90429;
+        }
+
+        /* QR 코드 컨테이너 스타일 */
+        .qr-code {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* QR 코드 제목 스타일 */
+        .qr-code h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* QR 코드 이미지 스타일 */
+        .qr-code img {
+            max-width: 300px;
+            height: auto;
+            margin: 1.5rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        /* QR 코드 이미지 호버 효과 */
+        .qr-code img:hover {
+            transform: scale(1.02);
+        }
+
+        /* 페이드인 애니메이션 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        /* 페이드인 키프레임 정의 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 버튼 컨테이너 스타일 */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
         }
     </style>
 </head>
 
 <body>
+    <!-- 메인 컨테이너 -->
     <div class="container fade-in">
+        <!-- 헤더 타이틀 -->
         <h1>
             <i class="material-icons" style="vertical-align: middle; margin-right: 10px;">qr_code_2</i>
             QR 컨텐츠 매니저
         </h1>
 
+        <!-- 컨텐츠 입력 폼 -->
         <form id="contentForm" action="/upload" method="post" enctype="multipart/form-data">
+            <!-- 컨텐츠 타입 선택 -->
             <div class="form-group">
                 <label class="form-label">컨텐츠 타입</label>
-                <select id="contentType" name="type">
+                <select id="contentType" name="type" onchange="handleContentTypeChange(this.value)">
                     <option value="">선택하세요</option>
                     <option value="address">주소</option>
                     <option value="text">텍스트</option>
@@ -167,16 +255,19 @@
                 </select>
             </div>
 
+            <!-- 주소 입력 폼 -->
             <div id="addressInput" class="form-group hidden">
                 <label class="form-label">주소 입력</label>
                 <input type="text" name="address" placeholder="https://www.example.com">
             </div>
 
+            <!-- 텍스트 입력 폼 -->
             <div id="textInput" class="form-group hidden">
                 <label class="form-label">텍스트 입력</label>
                 <textarea name="data" rows="4" placeholder="텍스트를 입력하세요..."></textarea>
             </div>
 
+            <!-- 파일 업로드 폼 -->
             <div id="fileInput" class="form-group hidden">
                 <label class="form-label">파일 업로드</label>
                 <div class="file-input-wrapper">
@@ -189,6 +280,7 @@
                 </div>
             </div>
 
+            <!-- 연락처 입력 폼 -->
             <div id="vcardInput" class="form-group hidden">
                 <label class="form-label">연락처 정보</label>
                 <input type="text" name="name" placeholder="이름" class="form-group">
@@ -197,76 +289,82 @@
                 <input type="text" name="address" placeholder="주소">
             </div>
 
+            <!-- 위치 입력 폼 -->
             <div id="locationInput" class="form-group hidden">
-                <label class="form-label">위치 정보</label>
-                <div class="location-buttons">
-                    <button type="button" class="current-location-btn" onclick="getCurrentLocation()">
-                        <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">my_location</i>
-                        현재 위치 가져오기
-                    </button>
-                </div>
-                <input type="text" id="locationName" name="locationName" placeholder="위치명" readonly>
+                <label class="form-label">현재 위치</label>
+                <button type="button" onclick="getCurrentLocation()" class="location-btn">
+                    <i class="material-icons">my_location</i>
+                    현재 위치 가져오기
+                </button>
+                <input type="text" id="locationName" name="locationName" readonly>
                 <input type="hidden" id="latitude" name="latitude">
                 <input type="hidden" id="longitude" name="longitude">
             </div>
 
+            <!-- 제출 버튼 -->
             <button type="submit" class="submit-btn">
                 <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">qr_code</i>
                 QR 코드 생성하기
             </button>
         </form>
 
+        <!-- QR 코드 결과 표시 영역 -->
         <div th:if="${qrCode}" class="qr-code fade-in">
             <h2>생성된 QR 코드</h2>
             <img th:src="@{'data:image/png;base64,' + ${qrCode}}" alt="QR Code" />
-            <button id="resetBtn" class="reset-btn">
-                <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">refresh</i>
-                QR 코드 초기화
-            </button>
+            <div class="button-container">
+                <button id="resetBtn" class="reset-btn">
+                    <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">refresh</i>
+                    QR 생성 초기화
+                </button>
+            </div>
         </div>
 
+        <!-- 에러 메시지 표시 영역 -->
         <div th:if="${error}" class="message error fade-in">
             <p th:text="${error}"></p>
         </div>
     </div>
+
     <script>
+        // 선택된 파일 저장 변수
         let selectedFile = null;
 
-        document.getElementById('contentType').addEventListener('change', function () {
-            var addressInput = document.getElementById('addressInput');
-            var textInput = document.getElementById('textInput');
-            var fileInput = document.getElementById('fileInput');
-            var vcardInput = document.getElementById('vcardInput');
-            var locationInput = document.getElementById('locationInput');
+        // 컨텐츠 타입 변경 처리 함수
+        function handleContentTypeChange(value) {
+            // 모든 입력 폼을 숨김
+            document.querySelectorAll('.form-group').forEach(el => {
+                if (el.id && el.id.endsWith('Input')) {
+                    el.classList.add('hidden');
+                }
+            });
 
-            addressInput.classList.add('hidden');
-            textInput.classList.add('hidden');
-            fileInput.classList.add('hidden');
-            vcardInput.classList.add('hidden');
-            locationInput.classList.add('hidden');
-
-            switch (this.value) {
+            // 선택된 타입에 따라 해당 입력 폼을 표시
+            switch (value) {
                 case 'address':
-                    addressInput.classList.remove('hidden');
+                    document.getElementById('addressInput').classList.remove('hidden');
                     break;
                 case 'text':
-                    textInput.classList.remove('hidden');
+                    document.getElementById('textInput').classList.remove('hidden');
                     break;
                 case 'image':
                 case 'video':
-                    fileInput.classList.remove('hidden');
+                    document.getElementById('fileInput').classList.remove('hidden');
                     break;
                 case 'vcard':
-                    vcardInput.classList.remove('hidden');
+                    document.getElementById('vcardInput').classList.remove('hidden');
                     break;
                 case 'location':
-                    locationInput.classList.remove('hidden');
+                    document.getElementById('locationInput').classList.remove('hidden');
+                    getCurrentLocation(); // 위치 타입 선택시 자동으로 위치 가져오기
                     break;
             }
-        });
+        }
 
+        // 현재 위치 가져오기 함수
         function getCurrentLocation() {
             if (navigator.geolocation) {
+                // 위치 확인 중 로딩 표시
                 Swal.fire({
                     title: '위치 확인 중...',
                     text: '현재 위치를 확인하고 있습니다.',
@@ -276,41 +374,32 @@
                     }
                 });
 
+                // 위치 정보 요청
                 navigator.geolocation.getCurrentPosition(
+                    // 성공 콜백
                     function (position) {
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
 
-                        // 바로 좌표값 설정
-                        document.getElementById('locationName').value = `위도: ${lat}, 경도: ${lng}`;
+                        // 위도, 경도 값을 hidden input에 설정
                         document.getElementById('latitude').value = lat;
                         document.getElementById('longitude').value = lng;
+                        document.getElementById('locationName').value = `위도: ${lat.toFixed(6)}, 경도: ${lng.toFixed(6)}`;
 
-                        // 위치 확인 완료 메시지 표시
+                        // 성공 메시지 표시
                         Swal.fire({
                             title: '위치 확인 완료!',
                             text: '현재 위치가 설정되었습니다.',
                             icon: 'success',
                             confirmButtonText: '확인'
                         });
-
-                        // 백그라운드에서 주소 정보 가져오기
-                        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&language=ko`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.results && data.results[0]) {
-                                    document.getElementById('locationName').value = data.results[0].formatted_address;
-                                }
-                            })
-                            .catch(error => {
-                                console.log('주소 변환 중 오류 발생:', error);
-                            });
                     },
+                    // 에러 콜백
                     function (error) {
-                        let errorMessage = '위치 정보를 가져올 수 없습니다.';
+                        let errorMessage = '위치를 가져오는데 실패했습니다.';
                         switch (error.code) {
                             case error.PERMISSION_DENIED:
-                                errorMessage = '위치 정보 접근이 거부되었습니다.';
+                                errorMessage = '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.';
                                 break;
                             case error.POSITION_UNAVAILABLE:
                                 errorMessage = '위치 정보를 사용할 수 없습니다.';
@@ -319,6 +408,7 @@
                                 errorMessage = '위치 정보 요청이 시간 초과되었습니다.';
                                 break;
                         }
+                        // 에러 메시지 표시
                         Swal.fire({
                             title: '오류!',
                             text: errorMessage,
@@ -326,17 +416,29 @@
                             confirmButtonText: '확인'
                         });
                     },
+                    // 위치 요청 옵션
                     {
                         enableHighAccuracy: true,
-                        timeout: 5000,  // 타임아웃 시간을 5초로 줄임
+                        timeout: 10000,
                         maximumAge: 0
                     }
                 );
+            } else {
+                // 지오로케이션 미지원 브라우저 처리
+                Swal.fire({
+                    title: '오류!',
+                    text: '브라우저가 위치 서비스를 지원하지 않습니다.',
+                    icon: 'error',
+                    confirmButtonText: '확인'
+                });
             }
         }
 
+        // 폼 제출 이벤트 처리
         document.getElementById('contentForm').addEventListener('submit', function (e) {
             var contentType = document.getElementById('contentType').value;
+
+            // 컨텐츠 타입 선택 확인
             if (contentType === '') {
                 e.preventDefault();
                 Swal.fire({
@@ -348,9 +450,38 @@
                 return;
             }
 
+            // 미니게임(Quiz) 선택시 알림 후 QR 코드 생성
+            if (contentType === 'quiz') {
+                e.preventDefault();
+                Swal.fire({
+                    title: '미니게임 안내',
+                    html: `
+                    <div style="text-align: left; padding: 10px;">
+                        <p>🎮 <strong>간단한 퀴즈 게임입니다!</strong></p>
+                        <br>
+                        <p>- 다양한 주제의 퀴즈를 풀어볼 수 있습니다</p>
+                        <p>- 정답을 맞추면 점수를 획득할 수 있습니다</p>
+                        <p>- 상위 10위까지 랭킹이 기록됩니다</p>
+                        <br>
+                        <p style="color: #4361ee;"><strong>QR 코드를 스캔하면 바로 게임을 시작할 수 있습니다!</strong></p>
+                    </div>
+                `,
+                    icon: 'info',
+                    confirmButtonText: '확인'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 폼을 직접 서버로 제출
+                        this.submit();
+                    }
+                });
+                return;
+            }
+
+            // 위치 정보 확인
             if (contentType === 'location') {
-                var latitude = document.getElementById('latitude').value;
-                var longitude = document.getElementById('longitude').value;
+                const latitude = document.getElementById('latitude').value;
+                const longitude = document.getElementById('longitude').value;
+
                 if (!latitude || !longitude) {
                     e.preventDefault();
                     Swal.fire({
@@ -363,8 +494,8 @@
                 }
             }
 
+            // 파일 업로드 확인
             if (contentType === 'image' || contentType === 'video') {
-                var fileInput = document.getElementById('fileUpload');
                 if (!selectedFile) {
                     e.preventDefault();
                     Swal.fire({
@@ -376,21 +507,23 @@
                     return;
                 }
 
-                // 파일명에서 한글 및 특수문자 제거
+                // 파일명 정제 및 파일 객체 생성
                 var newFileName = selectedFile.name.replace(/[^a-zA-Z0-9.]/g, '_');
                 var newFile = new File([selectedFile], newFileName, { type: selectedFile.type });
 
-                // 새로운 FileList 객체 생성
+                // 파일 입력 필드에 새 파일 설정
                 var dataTransfer = new DataTransfer();
                 dataTransfer.items.add(newFile);
-                fileInput.files = dataTransfer.files;
+                document.getElementById('fileUpload').files = dataTransfer.files;
             }
         });
 
+        // 파일 업로드 이벤트 처리
         document.getElementById('fileUpload').addEventListener('change', function (e) {
             var file = e.target.files[0];
-            var maxSize = 50 * 1024 * 1024; // 50MB in bytes
+            var maxSize = 50 * 1024 * 1024; // 50MB
 
+            // 파일 크기 체크
             if (file && file.size > maxSize) {
                 Swal.fire({
                     title: '파일 크기 초과!',
@@ -401,6 +534,7 @@
                 this.value = '';
                 selectedFile = null;
             } else if (file) {
+                // 파일 선택 성공 처리
                 selectedFile = file;
                 const label = this.closest('.file-input-wrapper').querySelector('.file-input-label');
                 label.innerHTML = `
@@ -412,6 +546,7 @@
             }
         });
 
+        // QR 코드 생성 성공 메시지 표시
         if (document.querySelector('.qr-code')) {
             Swal.fire({
                 title: '성공!',
@@ -421,6 +556,7 @@
             });
         }
 
+        // 초기화 버튼 이벤트 처리
         document.getElementById('resetBtn')?.addEventListener('click', function (e) {
             e.preventDefault();
             Swal.fire({
@@ -431,7 +567,15 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: '확인',
-                cancelButtonText: '취소'
+                cancelButtonText: '취소',
+                showClass: {
+                    popup: 'swal2-noanimation',
+                    backdrop: 'swal2-noanimation'
+                },
+                hideClass: {
+                    popup: '',
+                    backdrop: ''
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     selectedFile = null;

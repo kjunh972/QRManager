@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>퀴즈 게임</title>
     <style>
+        /* 기본 스타일 초기화 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* 기본 폰트 및 배경색 설정 */
         body {
             font-family: 'Apple SD Gothic Neo', sans-serif;
             line-height: 1.6;
@@ -20,10 +22,12 @@
             padding: 20px;
         }
 
+        /* 숨김 클래스 */
         .hidden {
             display: none;
         }
 
+        /* 메인 컨테이너 스타일 */
         .container {
             max-width: 430px;
             margin: 0 auto;
@@ -33,6 +37,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        /* 제목 스타일 */
         h2 {
             font-size: 24px;
             text-align: center;
@@ -40,6 +45,7 @@
             color: #1d1d1f;
         }
 
+        /* 입력 필드 스타일 */
         input[type="text"] {
             width: 100%;
             padding: 15px;
@@ -49,6 +55,7 @@
             font-size: 16px;
         }
 
+        /* 버튼 기본 스타일 */
         button {
             width: 100%;
             padding: 15px;
@@ -63,16 +70,19 @@
             transition: background-color 0.3s;
         }
 
+        /* 버튼 호버 효과 */
         button:hover {
             background-color: #0077ed;
         }
 
+        /* 보조 버튼 스타일 */
         button.secondary {
             background-color: #f5f5f7;
             color: #0071e3;
             border: 1px solid #0071e3;
         }
 
+        /* 리더보드 스타일 */
         .leaderboard {
             margin-top: 20px;
             background: white;
@@ -80,11 +90,13 @@
             padding: 15px;
         }
 
+        /* 테이블 스타일 */
         table {
             width: 100%;
             border-collapse: collapse;
         }
 
+        /* 테이블 셀 스타일 */
         th,
         td {
             padding: 12px;
@@ -92,32 +104,38 @@
             border-bottom: 1px solid #d2d2d7;
         }
 
+        /* 테이블 헤더 스타일 */
         th {
             font-weight: 600;
             color: #1d1d1f;
         }
 
+        /* 문제 컨테이너 스타일 */
         #questionContainer {
             text-align: center;
             margin: 20px 0;
         }
 
+        /* 옵션 버튼 그리드 스타일 */
         #options {
             display: grid;
             gap: 10px;
             margin-top: 15px;
         }
 
+        /* 옵션 버튼 스타일 */
         #options button {
             background-color: white;
             color: #1d1d1f;
             border: 1px solid #d2d2d7;
         }
 
+        /* 옵션 버튼 호버 효과 */
         #options button:hover {
             background-color: #f5f5f7;
         }
 
+        /* 점수 표시 스타일 */
         .score-display {
             text-align: center;
             font-size: 18px;
@@ -128,6 +146,7 @@
 </head>
 
 <body>
+    <!-- 메인 컨테이너 -->
     <div class="container">
         <!-- 닉네임 입력 섹션 -->
         <div id="nicknameSection">
@@ -193,6 +212,7 @@
     </div>
 
     <script>
+        // 퀴즈 문제 배열
         const questions = [
             {
                 question: "대한민국의 수도는?",
@@ -246,22 +266,25 @@
             },
         ];
 
-
+        // 전역 변수 선언
         let currentQuestion = 0;
         let score = 0;
         let userNickname = "";
 
+        // 순위표 표시 함수
         function showLeaderboard() {
             document.getElementById("nicknameSection").classList.add("hidden");
             document.getElementById("leaderboardSection").classList.remove("hidden");
             loadLeaderboard(true);
         }
 
+        // 순위표 숨김 함수
         function hideLeaderboard() {
             document.getElementById("leaderboardSection").classList.add("hidden");
             document.getElementById("nicknameSection").classList.remove("hidden");
         }
 
+        // 퀴즈 시작 함수
         function startQuiz() {
             userNickname = document.getElementById("nickname").value;
             if (!userNickname) {
@@ -274,6 +297,7 @@
             showQuestion();
         }
 
+        // 문제 표시 함수
         function showQuestion() {
             if (currentQuestion >= questions.length) {
                 finishQuiz();
@@ -290,6 +314,7 @@
             document.getElementById("options").innerHTML = optionsHtml;
         }
 
+        // 답변 확인 함수
         function checkAnswer(selectedIndex) {
             const question = questions[currentQuestion];
             if (selectedIndex === question.correct) {
@@ -301,6 +326,7 @@
             showQuestion();
         }
 
+        // 퀴즈 종료 함수
         function finishQuiz() {
             document.getElementById("quizSection").classList.add("hidden");
             document.getElementById("resultSection").classList.remove("hidden");
@@ -309,6 +335,7 @@
             loadLeaderboard();
         }
 
+        // 점수 저장 함수
         function saveScore() {
             fetch('/api/quiz/score', {
                 method: 'POST',
@@ -324,6 +351,7 @@
             });
         }
 
+        // 순위표 로드 함수
         function loadLeaderboard(isMainLeaderboard = false) {
             fetch('/api/quiz/leaderboard')
                 .then(response => response.json())
@@ -343,6 +371,7 @@
                 });
         }
 
+        // 페이지 로드 시 순위표 초기화
         document.addEventListener('DOMContentLoaded', function () {
             loadLeaderboard();
         });

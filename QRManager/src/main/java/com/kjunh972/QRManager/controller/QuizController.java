@@ -17,9 +17,11 @@ import com.kjunh972.QRManager.repository.QuizScoreRepository;
 @Controller
 public class QuizController {
     
+    // 퀴즈 점수 저장소 주입
     @Autowired
     private QuizScoreRepository quizScoreRepository;
 
+    // 퀴즈 페이지 보여주기
     @GetMapping("/QuizJun")
     public String showQuizPage(Model model) {
         List<QuizScore> topScores = quizScoreRepository.findTop10ByOrderByScoreDesc();
@@ -27,13 +29,15 @@ public class QuizController {
         return "QuizJun";
     }
     
-    @PostMapping("/api/quiz/score")
+    // 퀴즈 점수 저장 API
+    @PostMapping("/api/quiz/score") 
     @ResponseBody
     public ResponseEntity<?> saveScore(@RequestBody QuizScore quizScore) {
         quizScoreRepository.save(quizScore);
         return ResponseEntity.ok().build();
     }
     
+    // 리더보드 조회 API
     @GetMapping("/api/quiz/leaderboard")
     @ResponseBody
     public List<QuizScore> getLeaderboard() {

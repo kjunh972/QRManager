@@ -27,27 +27,30 @@ import java.util.Enumeration;
 
 @Service
 public class ContentService {
-
     @Autowired
     private ContentRepository contentRepository;
-
     @Autowired
     private Environment environment;
 
+    // 서버 주소 저장 변수
     private String serverAddress;
 
+    // 서버 주소 설정 메서드
     public void setServerAddress(String address) {
         this.serverAddress = address;
     }
 
+    // 컨텐츠 저장 메서드
     public Content saveContent(String type, String data, MultipartFile file) throws IOException {
         Content content = new Content();
         content.setType(type);
         content.setCreatedAt(LocalDateTime.now());
 
+        // 텍스트인 경우 데이터 직접 저장
         if ("text".equals(type)) {
             content.setData(data);
         } else {
+            // 파일인 경우 업로드 후 경로 저장
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path path = Paths.get("uploads/" + fileName);
             Files.createDirectories(path.getParent());
@@ -58,21 +61,34 @@ public class ContentService {
         return contentRepository.save(content);
     }
 
+    // ID로 컨텐츠 조회
     public Content getContent(Long id) {
         return contentRepository.findById(id).orElse(null);
     }
 
-    public String generateVCardQRCode(String name, String phone, String email, String address) throws WriterException, IOException {
-        // 주소에서 앞뒤 공백을 제거하고, 맨 뒤의 쉼표가 있다면 제거합니다.
-        address = address != null ? address.trim() : "";
+    // vCard QR 코드 생성
+    public String generateVCardQRCode(String name, String phone, String email, String address)
+            throws WriterException, IOException {
+        // 주소 필수 체크
+        if (address == null || address.trim().isEmpty()) {
+            throw new IllegalArgumentException("주소를 입력해주세요.");
+        }
+
+        // 주소 데이터 정제
+        address = address.trim();
+        if (address.startsWith(",")) {
+            address = address.substring(1).trim();
+        }
         if (address.endsWith(",")) {
             address = address.substring(0, address.length() - 1).trim();
         }
 
+        // vCard 데이터 생성
         StringBuilder vCard = new StringBuilder();
         vCard.append("BEGIN:VCARD\r\n")
-             .append("VERSION:3.0\r\n");
-        
+                .append("VERSION:3.0\r\n");
+
+        // 선택적 필드 추가
         if (name != null && !name.isEmpty()) {
             vCard.append("FN;CHARSET=UTF-8:").append(name).append("\r\n");
         }
@@ -85,28 +101,33 @@ public class ContentService {
         if (!address.isEmpty()) {
             vCard.append("ADR;CHARSET=UTF-8:;;").append(address).append("\r\n");
         }
-        
+
         vCard.append("END:VCARD");
-        
-        System.out.println("Generated vCard: " + vCard); // 디버깅용 로그
-        return generateQRCode(new String(vCard.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+
+        System.out.println("Generated vCard: " + vCard);
+        return generateQRCode(
+                new String(vCard.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
     }
 
+    // QR 코드 생성 메서드
     public String generateQRCode(String data) throws WriterException, IOException {
-        // URL에서 마지막 쉼표 제거
+        // 데이터 정제
         if (data != null && data.endsWith(",")) {
             data = data.substring(0, data.length() - 1);
         }
-        
+
+        // QR 코드 생성
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200);
 
+        // PNG 이미지로 변환
         ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
         byte[] pngData = pngOutputStream.toByteArray();
         return Base64.getEncoder().encodeToString(pngData);
     }
 
+    // 서버 URL 조회
     public String getServerUrl() {
         if (serverAddress != null && !serverAddress.isEmpty()) {
             return serverAddress;
@@ -116,6 +137,7 @@ public class ContentService {
         return "http://" + internalIp + ":" + port;
     }
 
+    // 내부 IP 주소 조회
     private String getInternalIpAddress() {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -139,15 +161,17 @@ public class ContentService {
         return "localhost"; // 내부 IP를 찾지 못한 경우 localhost 반환
     }
 
+    // 컨텐츠 타입 조회
     public String getContentType(String filename) throws IOException {
         Path path = Paths.get("uploads", filename);
         return Files.probeContentType(path);
     }
 
+    // 퀴즈 QR 코드 생성
     public String generateQuizQRCode() throws WriterException, IOException {
-        // 직접 QuizJun 페이지로 이동하는 URL 생성
+        // 퀴즈 페이지 URL 생성
         String quizUrl = getServerUrl() + "/QuizJun";
-        System.out.println("Generated Quiz URL: " + quizUrl); 
+        System.out.println("Generated Quiz URL: " + quizUrl);
         return generateQRCode(quizUrl);
     }
 }
