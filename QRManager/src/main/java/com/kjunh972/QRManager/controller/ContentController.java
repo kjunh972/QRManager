@@ -33,7 +33,7 @@ public class ContentController {
 		return "index";
 	}
 
-	// 컨텐츠 업로드 및 QR코드 생성 처리
+	// 다양한 타입의 컨텐츠를 업로드하고 QR코드를 생성하는 메서드
 	@PostMapping("/upload")
 	public String uploadContent(@RequestParam("type") String type,
 			@RequestParam(value = "data", required = false) String data,
@@ -45,14 +45,21 @@ public class ContentController {
 			@RequestParam(value = "latitude", required = false) String latitude,
 			@RequestParam(value = "longitude", required = false) String longitude,
 			Model model) {
+		// 예외 처리를 위한 try-catch 블록 시작
 		try {
+			// 새로운 Content 객체 생성
 			Content content = new Content();
+			// 컨텐츠 타입 설정
 			content.setType(type);
+			// 생성 시간 설정
 			content.setCreatedAt(LocalDateTime.now());
+			// QR코드와 URL을 저장할 변수 선언
 			String qrCode;
 			String url;
 
+			// 컨텐츠 타입에 따른 처리
 			switch (type) {
+				// 퀴즈 타입 처리
 				case "quiz":
 					url = contentService.getServerUrl() + "/QuizJun";
 					content.setData(url);
@@ -60,12 +67,14 @@ public class ContentController {
 					contentService.saveContent(type, url, null); // DB 저장
 					break;
 
+				// 주소 타입 처리
 				case "address":
 					content.setData(address);
 					qrCode = contentService.generateQRCode(address);
-					contentService.saveContent(type, address, null); // DB 저장
+					contentService.saveContent(type, address, null);
 					break;
 
+				// vCard 타입 처리
 				case "vcard":
 					String vcardData = String.format("이름:%s,전화:%s,이메일:%s,주소:%s",
 							name, phone, email, address);
@@ -74,6 +83,7 @@ public class ContentController {
 					contentService.saveContent(type, vcardData, null); // DB 저장
 					break;
 
+				// 위치 타입 처리
 				case "location":
 					if (latitude == null || longitude == null) {
 						model.addAttribute("error", "위치 정보가 올바르지 않습니다.");
@@ -83,34 +93,39 @@ public class ContentController {
 							latitude, longitude, latitude, longitude);
 					content.setData(locationUrl);
 					qrCode = contentService.generateQRCode(locationUrl);
-					contentService.saveContent(type, locationUrl, null); // DB 저장
+					contentService.saveContent(type, locationUrl, null);
 					break;
 
+				// 이미지/비디오 타입 처리
 				case "image":
 				case "video":
 					if (file == null || file.isEmpty()) {
 						model.addAttribute("error", "파일을 선택해주세요.");
 						return "index";
 					}
-					content = contentService.saveContent(type, null, file); // DB 저장
+					content = contentService.saveContent(type, null, file);
 					url = contentService.getServerUrl() + "/view/" + content.getId();
-					qrCode = contentService.generateQRCode(url);
+					qrCode = contentService.generateQRCode(url); //
 					break;
 
+				// 텍스트 타입 처리
 				case "text":
-					content = contentService.saveContent(type, data, null); // DB 저장
+					content = contentService.saveContent(type, data, null);
 					url = contentService.getServerUrl() + "/view/" + content.getId();
-					qrCode = contentService.generateQRCode(url);
+					qrCode = contentService.generateQRCode(url); // QR코드 생성
 					break;
 
+				// 지원하지 않는 타입 처리
 				default:
 					throw new RuntimeException("지원하지 않는 컨텐츠 타입입니다.");
 			}
 
-			model.addAttribute("qrCode", qrCode);
+			// 생성된 QR코드와 메시지를 모델에 추가
+			model.addAttribute("qrCode", qrCode); 
 			model.addAttribute("message", "QR 코드가 생성되었습니다.");
 			model.addAttribute("contentId", content.getId());
 
+		// 예외 발생 시 에러 메시지 처리
 		} catch (Exception e) {
 			model.addAttribute("error", "오류 발생: " + e.getMessage());
 		}
