@@ -46,18 +46,20 @@ public class ContentService {
         content.setType(type);
         content.setCreatedAt(LocalDateTime.now());
 
-        // 텍스트인 경우 데이터 직접 저장
         if ("text".equals(type)) {
             content.setData(data);
-        } else {
+        } else if (file != null) {
             // 파일인 경우 업로드 후 경로 저장
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path path = Paths.get("uploads/" + fileName);
             Files.createDirectories(path.getParent());
             Files.write(path, file.getBytes());
             content.setData(path.toString());
+        } else {
+            content.setData(data);
         }
 
+        // DB에 저장
         return contentRepository.save(content);
     }
 
