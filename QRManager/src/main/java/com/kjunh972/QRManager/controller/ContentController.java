@@ -12,9 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -121,11 +119,11 @@ public class ContentController {
 			}
 
 			// 생성된 QR코드와 메시지를 모델에 추가
-			model.addAttribute("qrCode", qrCode); 
+			model.addAttribute("qrCode", qrCode);
 			model.addAttribute("message", "QR 코드가 생성되었습니다.");
 			model.addAttribute("contentId", content.getId());
 
-		// 예외 발생 시 에러 메시지 처리
+			// 예외 발생 시 에러 메시지 처리
 		} catch (Exception e) {
 			model.addAttribute("error", "오류 발생: " + e.getMessage());
 		}
@@ -135,13 +133,22 @@ public class ContentController {
 	// ID로 컨텐츠 조회
 	@GetMapping("/view/{id}")
 	public String viewContent(@PathVariable Long id, Model model) {
-		Content content = contentService.getContent(id);
-		if (content != null) {
+		try {
+			Content content = contentService.getContent(id);
+			if (content == null) {
+				model.addAttribute("error", "컨텐츠를 찾을 수 없습니다.");
+				return "error";
+			}
+
 			model.addAttribute("content", content);
-		} else {
-			model.addAttribute("error", "컨텐츠를 찾을 수 없습니다.");
+			if ("video".equals(content.getType()) || "image".equals(content.getType())) {
+				model.addAttribute("fileUrl", "/uploads/" + content.getData());
+			}
+			return "view";
+		} catch (Exception e) {
+			model.addAttribute("error", "컨텐츠 조회 중 오류 발생: " + e.getMessage());
+			return "error";
 		}
-		return "view";
 	}
 
 	// 업로드된 파일 제공
@@ -149,21 +156,29 @@ public class ContentController {
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
 		try {
-			Path file = Paths.get("uploads/" + filename);
+			Path file = Paths.get("uploads").resolve(filename).normalize();
 			Resource resource = new UrlResource(file.toUri());
 
-			if (resource.exists() || resource.isReadable()) {
-				return ResponseEntity.ok()
-						.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-						.contentType(MediaType.parseMediaType(contentService.getContentType(filename)))
-						.body(resource);
-			} else {
+			if (!resource.exists() || !resource.isReadable()) {
 				throw new RuntimeException("파일을 읽을 수 없습니다!");
 			}
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("Error: " + e.getMessage());
-		} catch (IOException e) {
-			throw new RuntimeException("파일을 읽는 중 오류가 발생했습니다: " + e.getMessage());
+
+			String contentType = Files.probeContentType(file);
+			if (contentType == null) {
+				contentType = "application/octet-stream";
+			}
+
+			// 비디오 스트리밍을 위한 헤더 추가
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+					.header(HttpHeaders.ACCEPT_RANGES, "bytes")
+					.header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate") // 캐시 비활성화
+					.header("Pragma", "no-cache")
+					.header("Expires", "0")
+					.contentType(MediaType.parseMediaType(contentType))
+					.body(resource);
+		} catch (Exception e) {
+			throw new RuntimeException("파일 처리 중 오류 발생: " + e.getMessage());
 		}
 	}
 

@@ -85,6 +85,21 @@
                 }
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.querySelector('video');
+            if (video) {
+                video.currentTime = 0;
+                video.addEventListener('loadedmetadata', function () {
+                    this.currentTime = 0;
+                });
+                video.addEventListener('play', function () {
+                    if (this.currentTime > 0) {
+                        this.currentTime = 0;
+                    }
+                });
+            }
+        });
     </script>
 </head>
 
@@ -98,15 +113,13 @@
                     th:src="@{'/uploads/' + ${content.data.substring(content.data.lastIndexOf('/') + 1)}}"
                     alt="업로드된 이미지" onload="this.style.display='block'" style="display:none" />
 
-                <video th:case="'video'" controls playsinline preload="auto"
-                    th:src="@{'/uploads/' + ${content.data.substring(content.data.lastIndexOf('/') + 1)}}"
-                    style="display:block">
-                    <source th:src="@{'/uploads/' + ${content.data.substring(content.data.lastIndexOf('/') + 1)}}"
-                        type="video/mp4">
-                    <source th:src="@{'/uploads/' + ${content.data.substring(content.data.lastIndexOf('/') + 1)}}"
-                        type="video/webm">
-                    <source th:src="@{'/uploads/' + ${content.data.substring(content.data.lastIndexOf('/') + 1)}}"
-                        type="video/quicktime">
+                <!-- 비디오 플레이어 부분만 수정 -->
+                <video th:case="'video'" controls playsinline preload="auto" th:src="@{'/uploads/' + ${content.data}}"
+                    style="display:block; width: 100%; max-height: 80vh; object-fit: contain;"
+                    onloadeddata="this.currentTime = 0;" oncanplay="this.currentTime = 0;"
+                    onseeking="if(this.currentTime === 0) this.play();">
+                    <source th:src="@{'/uploads/' + ${content.data}}" type="video/mp4">
+                    <source th:src="@{'/uploads/' + ${content.data}}" type="video/quicktime">
                     브라우저가 비디오 재생을 지원하지 않습니다.
                 </video>
             </div>

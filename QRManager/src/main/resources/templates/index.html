@@ -523,7 +523,6 @@
             var file = e.target.files[0];
             var maxSize = 50 * 1024 * 1024; // 50MB
 
-            // 파일 크기 체크
             if (file && file.size > maxSize) {
                 Swal.fire({
                     title: '파일 크기 초과!',
@@ -534,15 +533,14 @@
                 this.value = '';
                 selectedFile = null;
             } else if (file) {
-                // 파일 선택 성공 처리
                 selectedFile = file;
                 const label = this.closest('.file-input-wrapper').querySelector('.file-input-label');
                 label.innerHTML = `
-                    <i class="material-icons" style="color: var(--success-color)">check_circle</i>
-                    <span class="file-input-text">${file.name}</span>
-                    <span class="file-input-subtext">파일이 선택되었습니다</span>
-                    <input type="file" id="fileUpload" name="file" accept="image/*,video/*" style="display: none;">
-                `;
+            <i class="material-icons" style="color: var(--success-color)">check_circle</i>
+            <span class="file-input-text">${file.name}</span>
+            <span class="file-input-subtext">파일이 선택되었습니다</span>
+            <input type="file" id="fileUpload" name="file" accept="image/*,video/*" style="display: none;">
+        `;
             }
         });
 
