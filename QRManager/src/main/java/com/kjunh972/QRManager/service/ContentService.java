@@ -12,12 +12,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -237,23 +238,38 @@ public class ContentService {
     // 내부 IP 주소 조회 (IPv4 또는 WiFi)
     private String getInternalIpAddress() {
         try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface iface = interfaces.nextElement();
-                // 루프백이 아니고 활성화된 인터페이스만 확인
-                if (iface.isLoopback() || !iface.isUp())
-                    continue;
-
-                Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    InetAddress addr = addresses.nextElement();
-                    // IPv4 주소이고 내부 네트워크 주소인 경우
-                    if (addr instanceof Inet4Address && addr.isSiteLocalAddress()) {
-                        return addr.getHostAddress();
+            // 먼저 ipconfig로 시도
+            Process process = Runtime.getRuntime().exec("ipconfig");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("IPv4")) {
+                    // IPv4 주소 추출
+                    String[] parts = line.split(":");
+                    if (parts.length > 1) {
+                        String ip = parts[1].trim();
+                        if (!ip.equals("localhost")) {
+                            return ip;
+                        }
                     }
                 }
             }
-        } catch (SocketException e) {
+            
+            // ipconfig가 실패하면 NetworkInterface로 시도
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                if (iface.isUp() && !iface.isLoopback()) {
+                    Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                        InetAddress addr = addresses.nextElement();
+                        if (addr instanceof Inet4Address && !addr.isLoopbackAddress()) {
+                            return addr.getHostAddress();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "localhost";
