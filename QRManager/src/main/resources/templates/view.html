@@ -105,29 +105,35 @@
 
 <body>
     <div class="container">
-        <div th:if="${content}">
-            <div class="content-display" th:switch="${content.type}">
-                <p th:case="'text'" th:text="${content.data}"></p>
+        <div th:if="${content}" th:object="${content}">
+            <div class="content-display" th:switch="*{type}">
+                <p th:case="'text'" th:text="*{data}"></p>
 
-                <img th:case="'image'"
-                    th:src="@{'/uploads/' + ${content.data.substring(content.data.lastIndexOf('/') + 1)}}"
-                    alt="업로드된 이미지" onload="this.style.display='block'" style="display:none" />
+                <img th:case="'image'" 
+                     th:src="@{'/uploads/' + *{data.substring(data.lastIndexOf('/') + 1)}}"
+                     th:alt="#{view.image.alt}" 
+                     th:style="'display:none'"
+                     onload="this.style.display='block'" />
 
-                <!-- 비디오 플레이어 부분만 수정 -->
-                <video th:case="'video'" controls playsinline preload="auto" th:src="@{'/uploads/' + ${content.data}}"
-                    style="display:block; width: 100%; max-height: 80vh; object-fit: contain;"
-                    onloadeddata="this.currentTime = 0;" oncanplay="this.currentTime = 0;"
-                    onseeking="if(this.currentTime === 0) this.play();">
-                    <source th:src="@{'/uploads/' + ${content.data}}" type="video/mp4">
-                    <source th:src="@{'/uploads/' + ${content.data}}" type="video/quicktime">
-                    브라우저가 비디오 재생을 지원하지 않습니다.
+                <video th:case="'video'" 
+                       controls 
+                       playsinline 
+                       preload="auto"
+                       th:src="@{'/uploads/' + *{data}}"
+                       th:style="'display:block; width: 100%; max-height: 80vh; object-fit: contain;'"
+                       onloadeddata="this.currentTime = 0;" 
+                       oncanplay="this.currentTime = 0;"
+                       onseeking="if(this.currentTime === 0) this.play();">
+                    <source th:src="@{'/uploads/' + *{data}}" type="video/mp4">
+                    <source th:src="@{'/uploads/' + *{data}}" type="video/quicktime">
+                    <span th:text="#{view.video.unsupported}">브라우저가 비디오 재생을 지원하지 않습니다.</span>
                 </video>
             </div>
         </div>
 
         <div th:if="${error}" class="error-message">
             <p th:text="${error}"></p>
-            <button onclick="window.location.reload()">다시 시도</button>
+            <button th:onclick="'window.location.reload()'" th:text="#{view.error.retry}">다시 시도</button>
         </div>
     </div>
 </body>

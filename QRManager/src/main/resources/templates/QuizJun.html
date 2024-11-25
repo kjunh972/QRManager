@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>퀴즈 게임</title>
+    <title th:text="${msg.title}">퀴즈 게임</title>
     <style>
         /* 기본 스타일 초기화 */
         * {
@@ -150,35 +150,41 @@
     <div class="container">
         <!-- 닉네임 입력 섹션 -->
         <div id="nicknameSection">
-            <h2>퀴즈 게임</h2>
-            <input type="text" id="nickname" placeholder="닉네임을 입력해주세요">
-            <button onclick="startQuiz()">게임 시작하기</button>
-            <button class="secondary" onclick="showLeaderboard()">순위 보기</button>
+            <h2 th:text="${msg.title}">퀴즈 게임</h2>
+            <input type="text" id="nickname" th:placeholder="${msg.nicknamePlaceholder}">
+            <button th:onclick="startQuiz()" th:text="${msg.start}">게임 시작하기</button>
+            <button class="secondary" th:onclick="showLeaderboard()" th:text="${msg.leaderboardShow}">순위 보기</button>
         </div>
 
         <!-- 퀴즈 섹션 -->
         <div id="quizSection" class="hidden">
-            <h2>퀴즈</h2>
+            <h2 th:text="${msg.questionTitle}">퀴즈</h2>
             <div id="questionContainer">
                 <p id="question"></p>
                 <div id="options"></div>
             </div>
-            <p class="score-display">현재 점수: <span id="currentScore">0</span></p>
+            <p class="score-display">
+                <span th:text="${msg.currentScore}">현재 점수:</span>
+                <span id="currentScore">0</span>
+            </p>
         </div>
 
         <!-- 결과 섹션 -->
         <div id="resultSection" class="hidden">
-            <h2>퀴즈 완료!</h2>
-            <p class="score-display">최종 점수: <span id="finalScore">0</span></p>
-            <button onclick="location.reload()">다시 시작하기</button>
+            <h2 th:text="${msg.complete}">퀴즈 완료!</h2>
+            <p class="score-display">
+                <span th:text="${msg.finalScore}">최종 점수:</span>
+                <span id="finalScore">0</span>
+            </p>
+            <button th:onclick="location.reload()" th:text="${msg.restart}">다시 시작하기</button>
             <div class="leaderboard">
-                <h3>순위표</h3>
+                <h3 th:text="${msg.leaderboardTitle}">순위표</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th>순위</th>
-                            <th>닉네임</th>
-                            <th>점수</th>
+                            <th th:text="${msg.rank}">순위</th>
+                            <th th:text="${msg.nickname}">닉네임</th>
+                            <th th:text="${msg.score}">점수</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboardBody">
@@ -194,77 +200,26 @@
 
         <!-- 순위표 섹션 -->
         <div id="leaderboardSection" class="hidden">
-            <h2>순위표</h2>
+            <h2 th:text="${msg.leaderboardTitle}">순위표</h2>
             <div class="leaderboard">
                 <table>
                     <thead>
                         <tr>
-                            <th>순위</th>
-                            <th>닉네임</th>
-                            <th>점수</th>
+                            <th th:text="${msg.rank}">순위</th>
+                            <th th:text="${msg.nickname}">닉네임</th>
+                            <th th:text="${msg.score}">점수</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboardBodyMain"></tbody>
                 </table>
             </div>
-            <button onclick="hideLeaderboard()">돌아가기</button>
+            <button th:onclick="hideLeaderboard()" th:text="${msg.back}">돌아가기</button>
         </div>
     </div>
 
-    <script>
-        // 퀴즈 문제 배열
-        const questions = [
-            {
-                question: "대한민국의 수도는?",
-                options: ["서울", "부산", "대구", "인천"],
-                correct: 0
-            },
-            {
-                question: "1 + 1 = ?",
-                options: ["1", "2", "3", "4"],
-                correct: 1
-            },
-            {
-                question: "고양이가 세상을 지배한다면, 가장 먼저 금지할 행동은?",
-                options: ["개를 산책시키기", "책 읽기", "TV 보기", "청소하기"],
-                correct: 0
-            },
-            {
-                question: "태양계에서 가장 큰 행성은?",
-                options: ["지구", "화성", "목성", "토성"],
-                correct: 2
-            },
-            {
-                question: "1년은 몇 개월인가요?",
-                options: ["10개월", "11개월", "12개월", "13개월"],
-                correct: 2
-            },
-            {
-                question: "한글날은 몇 월 며칠인가요?",
-                options: ["9월 9일", "10월 9일", "11월 9일", "12월 9일"],
-                correct: 1
-            },
-            {
-                question: "파이의 값은 소수점 둘째 자리까지 얼마인가요?",
-                options: ["3.12", "3.13", "3.14", "3.15"],
-                correct: 2
-            },
-            {
-                question: "토끼는 당근을 먹을 때 무슨 생각을 할까요?",
-                options: ["이건 내꺼다!", "더 주세요!", "이걸 왜 먹지?", "당근은 진리다!"],
-                correct: 1
-            },
-            {
-                question: "외계인이 지구를 방문한다면 가장 먼저 할 일은?",
-                options: ["핸드폰 사기", "피자 먹기", "유튜브 보기", "SNS에 인증샷 올리기"],
-                correct: 3
-            },
-            {
-                question: "지구는 몇 개의 위성을 가지고 있나요?",
-                options: ["0개", "1개", "2개", "3개"],
-                correct: 1
-            },
-        ];
+    <script th:inline="javascript">
+        // 서버에서 전달받은 퀴즈 문제 배열
+        const questions = /*[[${questions}]]*/ [];
 
         // 전역 변수 선언
         let currentQuestion = 0;
