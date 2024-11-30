@@ -2,6 +2,15 @@
 
 QR 코드를 통한 다양한 컨텐츠 관리 시스템
 
+## 목차
+- [주요 기능](#주요-기능)
+- [기술 스택](#기술-스택)
+- [기능 미리보기](#기능-미리보기)
+- [시작하기](#시작하기)
+- [주요 API](#주요-api)
+- [보안 기능](#보안-기능)
+- [지원](#지원)
+
 ## 주요 기능
 
 ### 1. 다양한 컨텐츠 타입 지원
@@ -27,16 +36,53 @@ QR 코드를 통한 다양한 컨텐츠 관리 시스템
 ## 기술 스택
 
 ### Backend
-- Java 17
-- Spring Boot 3.3.4
-- Spring Data JPA
-- H2 Database
+
+![Java](https://img.shields.io/badge/Java-%23ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-%236DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-%236DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![H2 Database](https://img.shields.io/badge/H2%20Database-%230072b1?style=for-the-badge&logo=h2&logoColor=white)
 
 ### Frontend
-- Thymeleaf
-- HTML5/CSS3
-- JavaScript
-- SweetAlert2
+
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-%2330c58e?style=for-the-badge&logo=thymeleaf&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-%23E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-%231572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![SweetAlert2](https://img.shields.io/badge/SweetAlert2-%236f42c1?style=for-the-badge&logo=javascript&logoColor=white)
+
+## 기능 미리보기
+1. QR 생성
+
+- 주소 QR 생성
+![주소](https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%A3%BC%EC%86%8C_QR%EC%83%9D%EC%84%B1.gif)
+
+- 텍스트 QR 생성
+![주소](https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%ED%85%8D%EC%8A%A4%ED%8A%B8_QR%EC%83%9D%EC%84%B1.gif)
+
+- 이미지 QR 생성
+![주소](https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%9D%B4%EB%AF%B8%EC%A7%80_QR%EC%83%9D%EC%84%B1.gif)
+
+- 동영상 QR 생성
+![주소](https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%B9%84%EB%94%94%EC%98%A4_QR%EC%83%9D%EC%84%B1.gif)
+
+- 연락처 QR 생성
+![주소](https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%97%B0%EB%9D%BD%EC%B2%98_QR%EC%83%9D%EC%84%B1.gif)
+
+- 미니게임 QR 생성
+![주소](https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%84_QR%EC%83%9D%EC%84%B1.gif)
+
+- 현재 위치 QR 생성
+![주소](https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%ED%98%84%EC%9E%AC%EC%9C%84%EC%B9%98_QR%EC%83%9D%EC%84%B1.gif)
+
+
+2. QR 스캔
+
+| 주소 | 텍스트 | 이미지 | 동영상 |
+| :-: | :-: | :-: | :-: |
+| <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%A3%BC%EC%86%8C_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%ED%85%8D%EC%8A%A4%ED%8A%B8_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%9D%B4%EB%AF%B8%EC%A7%80_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%B9%84%EB%94%94%EC%98%A4_%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/>  |
+| 연락처 | 미니게임 | 현재 위치 |
+| <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%97%B0%EB%9D%BD%EC%B2%98_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%84_%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | |
+
 
 ## 시작하기
 
@@ -90,9 +136,8 @@ http://localhost:8056
 - MIME 타입 검증
 - XSS 방지
 
-## 기여하기
-1. Fork the Project
-2. Create your Feature Branch
-3. Commit your Changes
-4. Push to the Branch
-5. Open a Pull Request
+## 지원
+
+[![Gmail Badge](https://img.shields.io/badge/Gmail-d14836?style=flat-square&logo=Gmail&logoColor=white&link=mailto:kjunh972@gmail.com)](mailto:kjunh972@gmail.com)
+[![Tistory's Badge](https://github-readme-tistory-card.vercel.app/api/badge?name={Tistory})](https://github.com/kjunh972/github-readme-tistory-card)
+
