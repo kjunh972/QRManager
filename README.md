@@ -108,7 +108,7 @@ QR Manager는 다양한 형태의 컨텐츠를 QR 코드로 손쉽게 관리할 
 
 1. 저장소 클론
 ```bash
-git clone https://github.com/kjunh972/QRManager.git
+git clone https://github.com/kjunh972/QRManager.git
 ```
 
 2. 프로젝트 디렉토리로 이동
