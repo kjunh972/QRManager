@@ -77,12 +77,17 @@ QR 코드를 통한 다양한 컨텐츠 관리 시스템
 
 2. QR 스캔
 
-| 주소 | 텍스트 | 이미지 | 동영상 |
-| :-: | :-: | :-: | :-: |
-| <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%A3%BC%EC%86%8C_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%ED%85%8D%EC%8A%A4%ED%8A%B8_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%9D%B4%EB%AF%B8%EC%A7%80_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%B9%84%EB%94%94%EC%98%A4_%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/>  |
-| 연락처 | 미니게임 | 현재 위치 |
-| <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%97%B0%EB%9D%BD%EC%B2%98_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%84_%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | |
+| 주소 | 텍스트 | 연락처 |
+| :-: | :-: | :-: |
+| <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%A3%BC%EC%86%8C_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%ED%85%8D%EC%8A%A4%ED%8A%B8_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%97%B0%EB%9D%BD%EC%B2%98_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> |
 
+| 이미지 | 동영상 |
+| :-: | :-: |
+| <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EC%9D%B4%EB%AF%B8%EC%A7%80_%20%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%B9%84%EB%94%94%EC%98%A4_%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> |
+
+| 미니게임 | 현재 위치 |
+| :-: | :-: |
+| <img src="https://github.com/kjunh972/QRManager/blob/main/QRManager/uploads/%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%84_%EB%AA%A8%EB%B0%94%EC%9D%BC.gif" width="200" height="420"/> | |
 
 ## 시작하기
 
