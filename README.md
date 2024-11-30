@@ -138,6 +138,5 @@ http://localhost:8056
 
 ## 지원
 
-[![Gmail Badge](https://img.shields.io/badge/Gmail-d14836?style=flat-square&logo=Gmail&logoColor=white&link=mailto:kjunh972@gmail.com)](mailto:kjunh972@gmail.com)
-[![Tistory's Badge](https://github-readme-tistory-card.vercel.app/api/badge?name={Tistory})](https://github.com/kjunh972/github-readme-tistory-card)
-
+[![Gmail Badge](https://img.shields.io/badge/Gmail-d14836?style=for-the-badge&logo=Gmail&logoColor=white&link=mailto:kjunh972@gmail.com)](mailto:kjunh972@gmail.com)
+[![Tistory](https://img.shields.io/badge/Tistory-%23FF5A4A?style=for-the-badge&logo=tistory&logoColor=white)](https://kjunh972.tistory.com)
